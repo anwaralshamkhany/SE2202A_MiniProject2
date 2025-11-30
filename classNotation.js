@@ -71,3 +71,6 @@ class Course {
         `;
     }
 }
+
+// Export for Node.js
+module.exports = Course;

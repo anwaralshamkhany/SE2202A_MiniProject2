@@ -69,3 +69,6 @@ Course.prototype.getDetailsHTML = function() {
         <div class="description">${details.description}</div>
     `;
 };
+
+// Export for Node.js
+module.exports = Course;
