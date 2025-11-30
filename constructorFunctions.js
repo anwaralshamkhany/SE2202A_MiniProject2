@@ -33,7 +33,7 @@ Course.prototype.toString = function() {
 // Method to display assignments
 Course.prototype.displayAssignments = function() {
     if (this.assignments.length === 0) {
-        return '';
+        return;
     }
     
     console.log('Assignments >>>');

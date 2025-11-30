@@ -34,7 +34,7 @@ class Course {
     // Method to display assignments
     displayAssignments() {
         if (this.assignments.length === 0) {
-            return '';
+            return;
         }
         
         console.log('Assignments >>>');
