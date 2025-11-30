@@ -37,11 +37,16 @@ class Course {
             return '';
         }
         
-        let output = 'Assignments >>>\n';
+        console.log('Assignments >>>');
         this.assignments.forEach(assignment => {
-            output += `   Title: ${assignment.title} | Due Date: ${assignment.dueDate}\n`;
+            console.log(`   Title: ${assignment.title} | Due Date: ${assignment.dueDate}`);
         });
-        return output;
+    }
+    
+    // Method to print course information
+    printCourseInfo() {
+        console.log(this.toString());
+        this.displayAssignments();
     }
 
     // Method to create HTML for course item in list
