@@ -8,6 +8,7 @@ function Course(data) {
     this.instructor = data.instructor;
     this.description = data.description;
     this.semester = data.semester;
+    this.assignments = data.assignments || [];
 }
 
 // Method to get formatted course details
@@ -22,6 +23,24 @@ Course.prototype.getDetails = function() {
         semester: this.semester,
         description: this.description
     };
+};
+
+// toString method for formatted output
+Course.prototype.toString = function() {
+    return `Course: ${this.title} | Instructor: ${this.instructor} | Credit Hours: ${this.credits}`;
+};
+
+// Method to display assignments
+Course.prototype.displayAssignments = function() {
+    if (this.assignments.length === 0) {
+        return '';
+    }
+    
+    let output = 'Assignments >>>\n';
+    this.assignments.forEach(assignment => {
+        output += `   Title: ${assignment.title} | Due Date: ${assignment.dueDate}\n`;
+    });
+    return output;
 };
 
 // Method to create HTML for course item in list
