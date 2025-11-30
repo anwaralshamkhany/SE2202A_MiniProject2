@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Course Explorer</h1>
+        
+        <!-- File Upload Section -->
+        <div class="file-upload-section">
+            <h2>Load Courses (JSON)</h2>
+            <input type="file" id="fileInput" accept=".json">
+            <span id="fileName"></span>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+
+        <!-- Sort and Filter Section -->
+        <div class="filter-section">
+            <h2>Sort and Filter</h2>
+            <div class="filter-controls">
+                <label>
+                    Department:
+                    <select id="departmentFilter">
+                        <option value="All">All</option>
+                    </select>
+                </label>
+
+                <label>
+                    Level:
+                    <select id="levelFilter">
+                        <option value="All">All</option>
+                    </select>
+                </label>
+
+                <label>
+                    Credits:
+                    <select id="creditsFilter">
+                        <option value="All">All</option>
+                    </select>
+                </label>
+
+                <label>
+                    Instructor:
+                    <select id="instructorFilter">
+                        <option value="All">All</option>
+                    </select>
+                </label>
+
+                <label>
+                    Sort By:
+                    <select id="sortBy">
+                        <option value="None">None</option>
+                        <option value="ID (A-Z)">ID (A-Z)</option>
+                        <option value="ID (Z-A)">ID (Z-A)</option>
+                        <option value="Title (A-Z)">Title (A-Z)</option>
+                        <option value="Title (Z-A)">Title (Z-A)</option>
+                        <option value="Semester (Earliest first)">Semester (Earliest first)</option>
+                        <option value="Semester (Latest first)">Semester (Latest first)</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Course List -->
+            <div class="course-list" id="courseList">
+                <!-- Course items will be dynamically added here -->
+            </div>
+
+            <!-- Course Details -->
+            <div class="course-details" id="courseDetails">
+                <p class="no-selection">Select a course to view details</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
