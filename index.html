@@ -11,7 +11,7 @@
         <h1>Course Explorer</h1>
         
         <!-- File Upload Section -->
-        <div class="file-upload-section">
+        <div class="upload-section">
             <h2>Load Courses (JSON)</h2>
             <input type="file" id="fileInput" accept=".json">
             <span id="fileName"></span>
@@ -54,10 +54,10 @@
                     Sort By:
                     <select id="sortBy">
                         <option value="None">None</option>
-                        <option value="ID (A-Z)">ID (A-Z)</option>
-                        <option value="ID (Z-A)">ID (Z-A)</option>
-                        <option value="Title (A-Z)">Title (A-Z)</option>
-                        <option value="Title (Z-A)">Title (Z-A)</option>
+                        <option value="ID (A–Z)">ID (A–Z)</option>
+                        <option value="ID (Z–A)">ID (Z–A)</option>
+                        <option value="Title (A–Z)">Title (A–Z)</option>
+                        <option value="Title (Z–A)">Title (Z–A)</option>
                         <option value="Semester (Earliest first)">Semester (Earliest first)</option>
                         <option value="Semester (Latest first)">Semester (Latest first)</option>
                     </select>
@@ -66,21 +66,23 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Course List -->
-            <div class="course-list" id="courseList">
-                <!-- Course items will be dynamically added here -->
+        <div class="content-area">
+            <!-- Course List Section -->
+            <div class="course-list-section">
+                <div id="courseList" class="course-list">
+                    <!-- Course items will be dynamically added here -->
+                </div>
             </div>
 
-            <!-- Course Details -->
-            <div class="course-details" id="courseDetails">
-                <p class="no-selection">Select a course to view details</p>
+            <!-- Course Details Section -->
+            <div class="course-details-section">
+                <div id="courseDetails" class="course-details">
+                    <p class="placeholder">Select a course to view details</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="classNotation.js"></script>
-    <script src="constructorFunctions.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
