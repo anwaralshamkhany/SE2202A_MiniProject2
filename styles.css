@@ -15,32 +15,29 @@ body {
     margin: 0 auto;
     background-color: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 32px;
+    margin-bottom: 30px;
+    font-size: 2em;
 }
 
 h2 {
-    font-size: 20px;
+    font-size: 1.3em;
     margin-bottom: 15px;
 }
 
-/* File Upload Section */
-.file-upload-section {
+/* Upload Section */
+.upload-section {
     background-color: #f9f9f9;
+    padding: 20px;
     border: 2px solid #ddd;
     border-radius: 5px;
-    padding: 20px;
     margin-bottom: 20px;
 }
 
 #fileInput {
-    padding: 5px;
     margin-right: 10px;
 }
 
@@ -63,9 +60,9 @@ h2 {
 /* Filter Section */
 .filter-section {
     background-color: #f0f0f0;
-    border: 2px solid #ccc;
-    border-radius: 5px;
     padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
     margin-bottom: 20px;
 }
 
@@ -85,72 +82,80 @@ h2 {
 
 .filter-controls select {
     padding: 5px 10px;
-    border: 1px solid #999;
+    border: 1px solid #ccc;
     border-radius: 3px;
     background-color: white;
-    font-size: 14px;
+    cursor: pointer;
     min-width: 150px;
 }
 
-/* Main Content Area */
-.main-content {
+/* Content Area */
+.content-area {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    min-height: 400px;
+    min-height: 500px;
 }
 
-/* Course List */
-.course-list {
+/* Course List Section */
+.course-list-section {
     border: 2px solid #ddd;
     border-radius: 5px;
     padding: 10px;
-    overflow-y: auto;
-    max-height: 600px;
+    background-color: #fafafa;
+}
+
+.course-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .course-item {
     padding: 15px;
-    margin-bottom: 10px;
-    background-color: #fafafa;
+    background-color: white;
     border: 1px solid #ddd;
     border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .course-item:hover {
-    background-color: #e8e8e8;
+    background-color: #f0f0f0;
+    border-color: #999;
 }
 
 .course-item.selected {
-    background-color: #d0e8ff;
-    border-color: #0066cc;
+    background-color: #e3f2fd;
+    border-color: #2196F3;
+    font-weight: bold;
 }
 
-.course-item h3 {
-    font-size: 18px;
-    margin: 0;
-}
-
-/* Course Details */
-.course-details {
+/* Course Details Section */
+.course-details-section {
     border: 2px solid #ddd;
     border-radius: 5px;
     padding: 20px;
     background-color: #fafafa;
 }
 
-.course-details .no-selection {
+.course-details {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.course-details .placeholder {
     color: #999;
     text-align: center;
-    margin-top: 50px;
     font-style: italic;
+    padding: 50px 20px;
 }
 
 .course-details h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 1.5em;
+    margin-bottom: 20px;
 }
 
 .course-details p {
@@ -158,12 +163,35 @@ h2 {
     line-height: 1.6;
 }
 
-.course-details strong {
-    font-weight: bold;
+.course-details p strong {
+    display: inline-block;
+    min-width: 120px;
 }
 
 .course-details .description {
-    margin-top: 15px;
+    margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #ddd;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .content-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-controls label {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-controls select {
+        width: 100%;
+    }
 }

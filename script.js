@@ -1,9 +1,36 @@
+// Course class definition
+class Course {
+    constructor(data) {
+        this.id = data.id;
+        this.title = data.title;
+        this.department = data.department;
+        this.level = data.level;
+        this.credits = data.credits;
+        this.instructor = data.instructor;
+        this.description = data.description;
+        this.semester = data.semester;
+    }
+
+    getFormattedDetails() {
+        return `
+            <h3>${this.id}</h3>
+            <p><strong>Title:</strong> ${this.title}</p>
+            <p><strong>Department:</strong> ${this.department}</p>
+            <p><strong>Level:</strong> ${this.level}</p>
+            <p><strong>Credits:</strong> ${this.credits}</p>
+            <p><strong>Instructor:</strong> ${this.instructor || 'TBA'}</p>
+            <p><strong>Semester:</strong> ${this.semester}</p>
+            <p class="description">${this.description}</p>
+        `;
+    }
+}
+
 // Global variables
 let allCourses = [];
 let filteredCourses = [];
 let selectedCourse = null;
 
-// DOM Elements
+// DOM elements
 const fileInput = document.getElementById('fileInput');
 const fileName = document.getElementById('fileName');
 const errorMessage = document.getElementById('errorMessage');
@@ -15,7 +42,7 @@ const creditsFilter = document.getElementById('creditsFilter');
 const instructorFilter = document.getElementById('instructorFilter');
 const sortBy = document.getElementById('sortBy');
 
-// Event Listeners
+// Event listeners
 fileInput.addEventListener('change', handleFileUpload);
 departmentFilter.addEventListener('change', applyFiltersAndSort);
 levelFilter.addEventListener('change', applyFiltersAndSort);
@@ -23,7 +50,7 @@ creditsFilter.addEventListener('change', applyFiltersAndSort);
 instructorFilter.addEventListener('change', applyFiltersAndSort);
 sortBy.addEventListener('change', applyFiltersAndSort);
 
-// File Upload Handler
+// File upload handler
 function handleFileUpload(event) {
     const file = event.target.files[0];
     
@@ -32,64 +59,56 @@ function handleFileUpload(event) {
     }
 
     fileName.textContent = file.name;
-    
-    // Check if file is JSON
-    if (!file.name.endsWith('.json')) {
-        showError('Invalid JSON file format.');
-        return;
-    }
+    errorMessage.textContent = '';
+    errorMessage.classList.remove('show');
 
     const reader = new FileReader();
     
     reader.onload = function(e) {
         try {
-            const data = JSON.parse(e.target.result);
+            const jsonData = JSON.parse(e.target.result);
             
-            // Validate that data is an array
-            if (!Array.isArray(data)) {
-                throw new Error('JSON file must contain an array of courses');
+            if (!Array.isArray(jsonData)) {
+                throw new Error('JSON data must be an array');
             }
 
-            // Create Course objects
-            allCourses = data.map(courseData => new Course(courseData));
-            filteredCourses = [...allCourses];
-            
-            // Clear any previous error
-            hideError();
-            
+            // Create Course objects from JSON data
+            allCourses = jsonData.map(courseData => {
+                // Validate required fields
+                if (!courseData.id || !courseData.title || !courseData.department) {
+                    throw new Error('Missing required course fields');
+                }
+                return new Course(courseData);
+            });
+
             // Initialize filters
             populateFilters();
             
             // Display courses
-            displayCourses();
+            filteredCourses = [...allCourses];
+            applyFiltersAndSort();
             
         } catch (error) {
-            showError('Invalid JSON file format.');
-            console.error('Error parsing JSON:', error);
+            errorMessage.textContent = 'Invalid JSON file format.';
+            errorMessage.classList.add('show');
+            allCourses = [];
+            filteredCourses = [];
+            courseList.innerHTML = '';
+            courseDetails.innerHTML = '<p class="placeholder">Select a course to view details</p>';
         }
     };
-    
+
     reader.onerror = function() {
-        showError('Error reading file.');
+        errorMessage.textContent = 'Error reading file.';
+        errorMessage.classList.add('show');
     };
-    
+
     reader.readAsText(file);
 }
 
-// Error Message Functions
-function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.classList.add('show');
-}
-
-function hideError() {
-    errorMessage.textContent = '';
-    errorMessage.classList.remove('show');
-}
-
-// Populate Filter Dropdowns
+// Populate filter dropdowns based on available data
 function populateFilters() {
-    // Get unique values for each filter using Set
+    // Get unique values using Set
     const departments = new Set();
     const levels = new Set();
     const credits = new Set();
@@ -105,116 +124,111 @@ function populateFilters() {
     });
 
     // Populate department filter
-    populateSelect(departmentFilter, Array.from(departments).sort());
+    populateDropdown(departmentFilter, Array.from(departments).sort());
     
     // Populate level filter (sort numerically)
-    populateSelect(levelFilter, Array.from(levels).sort((a, b) => a - b));
+    populateDropdown(levelFilter, Array.from(levels).sort((a, b) => a - b));
     
     // Populate credits filter (sort numerically)
-    populateSelect(creditsFilter, Array.from(credits).sort((a, b) => a - b));
+    populateDropdown(creditsFilter, Array.from(credits).sort((a, b) => a - b));
     
-    // Populate instructor filter
-    populateSelect(instructorFilter, Array.from(instructors).sort());
+    // Populate instructor filter (sort alphabetically)
+    populateDropdown(instructorFilter, Array.from(instructors).sort());
 }
 
-// Helper function to populate select elements
-function populateSelect(selectElement, values) {
+// Helper function to populate dropdown
+function populateDropdown(dropdown, values) {
     // Keep the "All" option
-    selectElement.innerHTML = '<option value="All">All</option>';
+    dropdown.innerHTML = '<option value="All">All</option>';
     
     values.forEach(value => {
         const option = document.createElement('option');
         option.value = value;
         option.textContent = value;
-        selectElement.appendChild(option);
+        dropdown.appendChild(option);
     });
 }
 
-// Apply Filters and Sort
+// Apply filters and sorting
 function applyFiltersAndSort() {
     // Start with all courses
     filteredCourses = [...allCourses];
 
-    // Apply filters using the filter method
-    filteredCourses = filteredCourses.filter(course => {
-        // Department filter
-        if (departmentFilter.value !== 'All' && course.department !== departmentFilter.value) {
-            return false;
-        }
+    // Apply department filter
+    if (departmentFilter.value !== 'All') {
+        filteredCourses = filteredCourses.filter(course => 
+            course.department === departmentFilter.value
+        );
+    }
 
-        // Level filter
-        if (levelFilter.value !== 'All' && course.level !== parseInt(levelFilter.value)) {
-            return false;
-        }
+    // Apply level filter
+    if (levelFilter.value !== 'All') {
+        filteredCourses = filteredCourses.filter(course => 
+            course.level === parseInt(levelFilter.value)
+        );
+    }
 
-        // Credits filter
-        if (creditsFilter.value !== 'All' && course.credits !== parseInt(creditsFilter.value)) {
-            return false;
-        }
+    // Apply credits filter
+    if (creditsFilter.value !== 'All') {
+        filteredCourses = filteredCourses.filter(course => 
+            course.credits === parseInt(creditsFilter.value)
+        );
+    }
 
-        // Instructor filter
-        if (instructorFilter.value !== 'All' && course.instructor !== instructorFilter.value) {
-            return false;
-        }
-
-        return true;
-    });
+    // Apply instructor filter
+    if (instructorFilter.value !== 'All') {
+        filteredCourses = filteredCourses.filter(course => 
+            course.instructor === instructorFilter.value
+        );
+    }
 
     // Apply sorting
-    const sortOption = sortBy.value;
-    
-    if (sortOption !== 'None') {
-        filteredCourses = sortCourses(filteredCourses, sortOption);
-    }
+    applySorting();
 
     // Display filtered and sorted courses
     displayCourses();
 }
 
-// Sort Courses Function
-function sortCourses(courses, sortOption) {
-    const sorted = [...courses];
+// Apply sorting based on selected option
+function applySorting() {
+    const sortOption = sortBy.value;
 
-    switch (sortOption) {
-        case 'ID (A-Z)':
-            sorted.sort((a, b) => a.id.localeCompare(b.id));
+    switch(sortOption) {
+        case 'ID (A–Z)':
+            filteredCourses.sort((a, b) => a.id.localeCompare(b.id));
             break;
-        
-        case 'ID (Z-A)':
-            sorted.sort((a, b) => b.id.localeCompare(a.id));
+        case 'ID (Z–A)':
+            filteredCourses.sort((a, b) => b.id.localeCompare(a.id));
             break;
-        
-        case 'Title (A-Z)':
-            sorted.sort((a, b) => a.title.localeCompare(b.title));
+        case 'Title (A–Z)':
+            filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
             break;
-        
-        case 'Title (Z-A)':
-            sorted.sort((a, b) => b.title.localeCompare(a.title));
+        case 'Title (Z–A)':
+            filteredCourses.sort((a, b) => b.title.localeCompare(a.title));
             break;
-        
         case 'Semester (Earliest first)':
-            sorted.sort((a, b) => compareSemesters(a.semester, b.semester));
+            filteredCourses.sort((a, b) => compareSemesters(a.semester, b.semester));
             break;
-        
         case 'Semester (Latest first)':
-            sorted.sort((a, b) => compareSemesters(b.semester, a.semester));
+            filteredCourses.sort((a, b) => compareSemesters(b.semester, a.semester));
+            break;
+        case 'None':
+        default:
+            // No sorting, keep original order
             break;
     }
-
-    return sorted;
 }
 
-// Compare Semesters Function
-// Assumes format "Season YYYY" (e.g., "Fall 2025", "Winter 2026")
+// Compare semesters for sorting
 function compareSemesters(sem1, sem2) {
-    const seasonOrder = {
+    const semesterOrder = {
         'Winter': 1,
         'Spring': 2,
         'Summer': 3,
         'Fall': 4
     };
 
-    // Parse semester strings
+    // Parse semester strings (format: "Season YYYY")
     const [season1, year1] = sem1.split(' ');
     const [season2, year2] = sem2.split(' ');
 
@@ -224,46 +238,39 @@ function compareSemesters(sem1, sem2) {
         return yearDiff;
     }
 
-    // If years are the same, compare seasons
-    return seasonOrder[season1] - seasonOrder[season2];
+    // If years are equal, compare seasons
+    return semesterOrder[season1] - semesterOrder[season2];
 }
 
-// Display Courses in List
+// Display courses in the list
 function displayCourses() {
     courseList.innerHTML = '';
 
     if (filteredCourses.length === 0) {
-        courseList.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">No courses match the selected filters.</p>';
+        courseList.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">No courses found matching the selected filters.</p>';
         return;
     }
 
     filteredCourses.forEach(course => {
         const courseItem = document.createElement('div');
         courseItem.className = 'course-item';
-        courseItem.dataset.id = course.id;
-        courseItem.innerHTML = `<h3>${course.id}</h3>`;
-        
-        courseItem.addEventListener('click', () => selectCourse(course));
-        
+        courseItem.textContent = course.id;
+        courseItem.addEventListener('click', () => selectCourse(course, courseItem));
         courseList.appendChild(courseItem);
     });
 }
 
-// Select Course and Display Details
-function selectCourse(course) {
-    selectedCourse = course;
-
-    // Remove previous selection highlighting
+// Select a course and display its details
+function selectCourse(course, element) {
+    // Remove previous selection
     document.querySelectorAll('.course-item').forEach(item => {
         item.classList.remove('selected');
     });
 
-    // Highlight selected course
-    const selectedItem = document.querySelector(`.course-item[data-id="${course.id}"]`);
-    if (selectedItem) {
-        selectedItem.classList.add('selected');
-    }
+    // Add selection to clicked item
+    element.classList.add('selected');
 
-    // Display course details
-    courseDetails.innerHTML = course.getDetailsHTML();
+    // Update course details
+    selectedCourse = course;
+    courseDetails.innerHTML = course.getFormattedDetails();
 }
